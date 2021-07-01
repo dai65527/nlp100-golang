@@ -70,6 +70,11 @@ func main() {
 		info[k] = reEmp.ReplaceAllString(info[k], "")
 	}
 
+	reInLink := regexp.MustCompile(`\[\[(.*?)\]\]`)
+	for k := range info {
+		info[k] = reInLink.ReplaceAllString(info[k], "$1")
+	}
+
 	for k := range info {
 		fmt.Printf("%s: %s\n", k, info[k])
 	}

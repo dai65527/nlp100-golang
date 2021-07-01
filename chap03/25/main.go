@@ -52,7 +52,7 @@ func getInfo(s string) map[string]string {
 	infoString := strings.Split(res, "\n|")
 	for _, infoStr := range infoString[1 : len(infoString)-1] {
 		kv := strings.Split(infoStr, "=")
-		info[strings.Trim(kv[0], " ")] = strings.Trim(kv[1], " ")
+		info[strings.Trim(kv[0], " ")] = strings.Trim(infoStr[len(kv[0]):], " ")
 	}
 	return info
 }
