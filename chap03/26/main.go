@@ -66,9 +66,16 @@ func main() {
 	}
 
 	info := getInfo(wiki.Text)
-	re := regexp.MustCompile(`\'{2,5}`)
+	reEmp := regexp.MustCompile(`\'{2,5}`)
 	for k := range info {
-		info[k] = re.ReplaceAllString(info[k], "")
+		info[k] = reEmp.ReplaceAllString(info[k], "")
+	}
+
+	reInLink := regexp.MustCompile(`\[\[(.*?)\]\]`)
+	for k := range info {
+		info[k] = reInLink.ReplaceAllStringFunc(info[k], func(s string) string {
+			return s[2 : len(s)-2]
+		})
 	}
 
 	for k := range info {
