@@ -6,7 +6,6 @@
 package main
 
 import (
-	"bufio"
 	"compress/gzip"
 	"encoding/json"
 	"fmt"
@@ -45,6 +44,19 @@ func getWikiData(filepath, title string) (*Wiki, error) {
 	return nil, fmt.Errorf("%s: not found", title)
 }
 
+func getInfo(s string) map[string]string {
+	info := map[string]string{}
+
+	pattern := regexp.MustCompile(`\{\{基礎情報\s国\n((.*)\n)+?\}\}\n`)
+	res := pattern.FindString(s)
+	infoString := strings.Split(res, "\n|")
+	for _, infoStr := range infoString[1 : len(infoString)-1] {
+		kv := strings.Split(infoStr, "=")
+		info[strings.Trim(kv[0], " ")] = strings.Trim(kv[1], " ")
+	}
+	return info
+}
+
 func main() {
 	wiki, err := getWikiData("../jawiki-country.json.gz", "イギリス")
 	if err != nil {
@@ -52,16 +64,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	pattern := regexp.MustCompile(`^\|(.+?)\s=\s(.+)$`)
-	scanner := bufio.NewScanner(strings.NewReader(wiki.Text))
-	info := map[string]string{}
-	for scanner.Scan() {
-		res := pattern.FindAllStringSubmatch(scanner.Text(), 1)
-		if len(res) > 0 {
-			info[res[0][1]] = res[0][2]
-		}
-	}
-
+	info := getInfo(wiki.Text)
 	for k, v := range info {
 		fmt.Printf("%s: %s\n", k, v)
 	}
