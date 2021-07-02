@@ -52,7 +52,7 @@ func ParseReader(r io.Reader) ([][]Morpheme, error) {
 
 			sentence = append(sentence, Morpheme{
 				Surface: words[0],
-				Base:    datas[5],
+				Base:    datas[6],
 				Pos:     datas[0],
 				Pos1:    datas[1],
 			})
