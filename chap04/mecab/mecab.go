@@ -68,3 +68,15 @@ func ParseFile(filepath string) ([][]Morpheme, error) {
 	}
 	return ParseReader(file)
 }
+
+func FindPosFromText(posName string, text [][]Morpheme) []Morpheme {
+	res := []Morpheme{}
+	for i := range text {
+		for _, morpheme := range text[i] {
+			if morpheme.Pos == posName {
+				res = append(res, morpheme)
+			}
+		}
+	}
+	return res
+}
