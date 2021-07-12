@@ -1,6 +1,7 @@
 package kkr
 
 import (
+	"bufio"
 	"fmt"
 	"strings"
 )
@@ -61,18 +62,39 @@ func ParseLineChunkInfo(line string) (*ChunkInfo, error) {
 	}, nil
 }
 
-// func ParseLine
+func ParseStringChunks(s string) ([]Chunk, error) {
+	scanner := bufio.NewScanner(strings.NewReader(s))
 
-// func ParseCaboCha(r io.Reader) ([]Morph, error) {
+	chunks := []Chunk{}
+	var chunk *Chunk = nil
+	for scanner.Scan() {
+		if scanner.Text() == "" {
+			continue
+		}
+		chunkInfo, err := ParseLineChunkInfo(scanner.Text())
 
-// 	return []Morph{}, nil
-// }
+		// new chunk
+		if err == nil {
+			if chunk != nil {
+				chunks = append(chunks, *chunk)
+			}
+			chunk = &Chunk{Dst: chunkInfo.Dst}
+			continue
+		}
 
-// func ParseCaboChaFile(filepath string) ([]Morph, error) {
-// 	file, err := os.Open(filepath)
-// 	if err != nil {
-// 		return nil, fmt.Errorf("os.Open: %v", err)
-// 	}
-// 	defer file.Close()
-// 	return ParseCaboCha(file)
-// }
+		// add morph
+		morph, err := ParseLineMorph(scanner.Text())
+		if err != nil {
+			return nil, err
+		}
+		chunk.Morphs = append(chunk.Morphs, *morph)
+	}
+
+	for i := 0; i < len(chunks); i++ {
+		if chunks[i].Dst >= 1 {
+			chunks[chunks[i].Dst-1].Srcs = append(chunks[chunks[i].Dst-1].Srcs, i+1)
+		}
+	}
+
+	return chunks, nil
+}
