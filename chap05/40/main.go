@@ -34,7 +34,7 @@ func main() {
 			break
 		}
 
-		morph, err := kkr.ParseLine(scanner.Text())
+		morph, err := kkr.ParseLineMorph(scanner.Text())
 		if err != nil {
 			continue
 		}
@@ -42,6 +42,7 @@ func main() {
 		morphs = append(morphs, *morph)
 	}
 
+	fmt.Printf("%#v\n", morphs)
 	for i := 0; i < len(morphs); i++ {
 		fmt.Println(morphs[i])
 	}
